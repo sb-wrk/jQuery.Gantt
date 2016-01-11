@@ -68,21 +68,33 @@
 			"use strict";
 
 			var today = moment();
-			var andTwoDays = moment().add("days",2);
+			var fromDate = today.add("months", -2);
+			var toDate = today.add("months", 2);
 
-			var today_friendly = "/Date(" + today.valueOf() + ")/";
-			var next_friendly = "/Date(" + andTwoDays.valueOf() + ")/";
+			var from_friendly = "/Date(" + fromDate.valueOf() + ")/";
+			var to_friendly = "/Date(" + toDate.valueOf() + ")/";
 
 			$(".gantt").gantt({
 				source: [{
-					name: "Testing",
+					name: "Test 1",
 					desc: " ",
 					values: [{
-						from: today_friendly,
-						to: next_friendly,
-						label: "Test", 
+						to: to_friendly,
+						from: from_friendly,
+						label: "Test 1", 
 						customClass: "ganttRed"
-					}]
+					},
+					{
+					name: "Test 2",
+					desc: " ",
+					values: [{
+						to: to_friendly,
+						from: from_friendly,
+						label: "Test 2", 
+						customClass: "ganttRed"
+					},					
+					]
+					}
 				}],
 				scale: "months",
 				minScale: "hours",
