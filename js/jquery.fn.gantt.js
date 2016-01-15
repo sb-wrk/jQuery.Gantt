@@ -10,6 +10,8 @@
 
     var UTC_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
+    var dowClass = ["sn", "wd", "wd", "wd", "wd", "wd", "sa"];
+
     // custom selector `:findday` used to match on specified day in ms.
     //
     // The selector is passed a date in ms and elements are added to the
@@ -327,13 +329,27 @@
                 var ganttLeftPanel = $('<div class="leftPanel"/>')
                     .append($('<div class="row spacer"/>')
                     .css("height", tools.getCellSize() * element.headerRows)
-                    .css("width", "100%"));
+                    .css("width", "100%").append($('<span class="title">'+(settings.title || '')+'</span>'))
+		);
 
                 var entries = [];
                 $.each(element.data, function (i, entry) {
                     if (i >= element.pageNum * settings.itemsPerPage &&
                         i < (element.pageNum * settings.itemsPerPage + settings.itemsPerPage)) {
                         var dataId = ('id' in entry) ? '" data-id="' + entry.id : '';
+
+                        if (entry.cat) {
+                            entries.push(
+                                '<div class="row cat row' + i +
+                                ' " id="RowdId_' + i + dataId + '">' +
+                                '<span class="fn-label' +
+                                (entry.cssClass ? ' ' + entry.cssClass : '') + '">' +
+                                entry.cat +
+                                '</span>' +
+                                '</div>');
+                        }
+
+
                         entries.push(
                             '<div class="row name row' + i +
                             (entry.desc ? '' : (' fn-wide '+dataId)) +
@@ -342,7 +358,7 @@
                             '<span class="fn-label' +
                             (entry.cssClass ? ' ' + entry.cssClass : '') + '">' +
                             (entry.name || '') +
-                            '</span>' +
+                            '</span>' +	
                             '</div>');
 
                         if (entry.desc) {
@@ -1091,7 +1107,7 @@
                           $(".fn-gantt-hint").css("left", e.pageX);
                           $(".fn-gantt-hint").css("top", e.pageY + 15);
                       });
-                }
+              	}  
                 if (classNames) {
                     bar.addClass(classNames);
                 }
@@ -1138,10 +1154,13 @@
                         return "";
                     }
                 };
+
                 // Loop through the values of each data element and set a row
                 $.each(element.data, function (i, entry) {
                     if (i >= element.pageNum * settings.itemsPerPage &&
                         i < (element.pageNum * settings.itemsPerPage + settings.itemsPerPage)) {
+
+			var dayCount = [];
 
                         $.each(entry.values, function (j, day) {
                             var _bar;
@@ -1231,12 +1250,26 @@
                                 from = $(element).find("#dh-" + dFrom);
                                 cFrom = from.data("offset");
                                 dl = Math.floor((dTo - dFrom) / UTC_DAY_IN_MS) + 1;
+				
                                 _bar = core.createProgressBar(dl, day.label, day.desc, day.customClass, day.dataObj);
 
                                 // find row
                                 topEl = $(element).find("#rowheader" + i);
                                 top = tools.getCellSize() * 5 + 2 + topEl.data("offset");
                                 _bar.css({ 'top': top, 'left': Math.floor(cFrom) });
+				_bar.addClass('row' + i);
+
+				/*
+				count days
+				*/
+				console.log(day.type);
+				if(day.type && $.inArray(settings.count, day.type)) {
+					/*
+					 * only workdays
+					 */
+					var workdays = tools.getWorkdays( tools.dateDeserialize(day.from), tools.dateDeserialize(day.to), element.scaleSteps );
+					dayCount[day.type] = (dayCount[day.type] || 0) + workdays;
+				}
 
                                 datapanel.append(_bar);
                             }
@@ -1249,6 +1282,10 @@
                                 $l.css("color", "");
                             }
                         });
+
+			//debug output day-count
+			var tmp = $(element).find(".row" + i + ".desc .fn-label");
+			tmp.text("U: " + (dayCount["U"] || 0));
 
                     }
                 });
@@ -1770,6 +1807,24 @@
                     ];
                 };
             })(),
+
+            getWorkdays: function(from, to, timeStep) {
+		var arr = tools.parseTimeRange ( from, to, 24 );
+		var cnt = 0;
+		for(var i = 0; i < (arr.length - 1); i++) {
+			var day = arr[i];
+                        var dayType = tools.isHoliday( day.getTime() ) ? "holiday" : dowClass[day.getDay()];
+
+			if (dayType == "wd") {
+				cnt++;
+			}
+
+			console.log(day);
+			console.log(cnt);
+		}
+
+		return cnt;
+	    },
 
             // Get the current cell height
             getCellSize: function () {
