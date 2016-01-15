@@ -1,7 +1,6 @@
 .gantt, .gantt2 {
     width: 100%;
     margin: 20px auto;
-    border: 14px solid #ddd;
     position: relative;
         -webkit-border-radius: 6px;
         -moz-border-radius: 6px;
@@ -23,20 +22,21 @@
     width: 100%;
 }
 
+.fn-gantt .title {
+    font-size: 25px;
+}
+
 .fn-gantt .fn-content {
     overflow: hidden;
     position: relative;
     width: 100%;
 }
 
-
-
-
 /* === LEFT PANEL === */
 
 .fn-gantt .leftPanel {
     float: left;
-    width: 225px;
+    width: 285px;
     overflow: hidden;
     border-right: 1px solid #DDD;
     position: relative;
@@ -49,9 +49,11 @@
     line-height: 24px;
     margin-left: -1px;
 }
+
 .fn-gantt .row.header {
     margin-left: 0;
 }
+
 
 .fn-gantt .leftPanel .fn-label {
     display: inline-block;
@@ -66,7 +68,7 @@
 .fn-gantt .leftPanel .row0 {
     border-top: 1px solid #DDD;
 }
-.fn-gantt .leftPanel .name, .fn-gantt .leftPanel .desc {
+.fn-gantt .leftPanel .name, .fn-gantt .leftPanel .desc, .fn-gantt .leftPanel .cat {
     float: left;
     height: 23px;
     margin: 0;
@@ -77,6 +79,12 @@
 .fn-gantt .leftPanel .name {
     width: 110px;
     font-weight: bold;
+}
+
+.fn-gantt .leftPanel .cat {
+    width: 60px;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .fn-gantt .leftPanel .desc {
@@ -133,7 +141,7 @@
 .fn-gantt .holiday {
     background-color: #ffd263;
     height: 23px;
-    margin: 0 0 -1px -1px;
+    margin: 0 0 -1px -1px; 
 }
 
 .fn-gantt .today {
